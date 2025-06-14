@@ -1,0 +1,3 @@
+*.exe
+/coff
+.DS_Store
