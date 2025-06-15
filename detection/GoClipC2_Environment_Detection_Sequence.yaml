@@ -1,41 +1,40 @@
-
 title: GoClipC2 Environment Detection Sequence
 status: experimental
 description: Detects GoClipC2 specific VDI/RDP environment detection patterns
 author: Andy Gill / ZephrFish
 date: 2025/06/15
 references:
-    - https://blog.zsec.uk/clippy-goes-rogue
+  - https://blog.zsec.uk/clippy-goes-rogue
 logsource:
-    category: process_creation
-    product: windows
+  category: process_creation
+  product: windows
 detection:
-    selection_env_vars:
-        CommandLine|contains:
-            - 'SESSIONNAME'
-            - 'CLIENTNAME'
-            - 'RDP_CLIENT_NAME'
-            - 'CITRIX_SESSION'
-            - 'VMWARE_USER_NAME'
-    selection_vdi_processes:
-        CommandLine|contains:
-            - 'vmtoolsd.exe'
-            - 'wfshell.exe'
-            - 'rdpclip.exe'
-            - 'tstheme.exe'
-    selection_detection:
-        CommandLine|contains:
-            - 'detectEnvironment'
-            - 'IsVDI'
-            - 'IsRDP'
-            - 'SessionType'
-    condition: selection_env_vars and (selection_vdi_processes or selection_detection)
-    timeframe: 2m
-    count: > 2
+  selection_env_vars:
+    CommandLine|contains:
+      - 'SESSIONNAME'
+      - 'CLIENTNAME'
+      - 'RDP_CLIENT_NAME'
+      - 'CITRIX_SESSION'
+      - 'VMWARE_USER_NAME'
+  selection_vdi_processes:
+    CommandLine|contains:
+      - 'vmtoolsd.exe'
+      - 'wfshell.exe'
+      - 'rdpclip.exe'
+      - 'tstheme.exe'
+  selection_detection:
+    CommandLine|contains:
+      - 'detectEnvironment'
+      - 'IsVDI'
+      - 'IsRDP'
+      - 'SessionType'
+  condition: selection_env_vars and (selection_vdi_processes or selection_detection)
+  timeframe: 2m
+  count: '>2'
 falsepositives:
-    - System administration tools
-    - VDI management software
+  - System administration tools
+  - VDI management software
 level: medium
 tags:
-    - attack.discovery
-    - attack.t1082
+  - attack.discovery
+  - attack.t1082
