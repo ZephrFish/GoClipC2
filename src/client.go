@@ -1,5 +1,4 @@
 // client.go - Complete Enhanced Clipboard Covert Channel Client
-// Background persistence and VDI/RDP detection for security research
 
 package main
 
