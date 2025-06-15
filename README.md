@@ -234,4 +234,4 @@ Graceful server shutdown:
 
 
 ### Further Reading
-I wrote a blog post([can be found here](blog.zsec.uk/clippy-goes-rogue/)) to acompany this tooling but have also released [ChunkyIngress](https://github.com/ZephrFish/ChunkyIngress) previously which might also interest you!
+I wrote a blog post([can be found here](https://blog.zsec.uk/clippy-goes-rogue/) to accompany this tooling but have also released [ChunkyIngress](https://github.com/ZephrFish/ChunkyIngress) previously which might also interest you!
