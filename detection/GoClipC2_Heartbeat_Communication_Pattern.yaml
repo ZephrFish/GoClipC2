@@ -1,0 +1,34 @@
+title: GoClipC2 Heartbeat Communication Pattern
+status: experimental
+description: Detects GoClipC2 specific heartbeat pattern with server/client communication
+author: Andy Gill / ZephrFish
+date: 2025/06/15
+references:
+    - https://blog.zsec.uk/clippy-goes-rogue
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_heartbeat:
+        CommandLine|contains:
+            - 'MSG_HEARTBEAT'
+            - 'heartbeatInterval'
+            - 'startHeartbeat'
+    selection_communication:
+        CommandLine|contains:
+            - '"ping"'
+            - '"pong"'
+            - '"alive"'
+            - 'BROADCAST'
+    selection_timing:
+        CommandLine|contains:
+            - '5 * time.Second'
+            - 'DEFAULT_HEARTBEAT'
+            - 'SetHeartbeatInterval'
+    condition: selection_heartbeat and (selection_communication or selection_timing)
+falsepositives:
+    - Network monitoring tools with heartbeat functionality
+level: high
+tags:
+    - attack.command_and_control
+    - attack.t1102

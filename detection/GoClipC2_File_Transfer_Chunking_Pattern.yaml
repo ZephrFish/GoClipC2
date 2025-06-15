@@ -1,0 +1,34 @@
+title: GoClipC2 File Transfer Chunking Pattern
+status: experimental
+description: Detects GoClipC2 specific file chunking with 800-byte chunks and Base64 encoding
+author: Andy Gill / ZephrFish
+date: 2025/06/15
+references:
+    - https://blog.zsec.uk/clippy-goes-rogue
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_chunking:
+        CommandLine|contains:
+            - 'FILE_CHUNK_SIZE'
+            - '800'
+            - 'TotalChunks'
+            - 'ChunkNum'
+    selection_encoding:
+        CommandLine|contains:
+            - 'base64'
+            - 'Base64'
+            - 'EncodeToString'
+    selection_files:
+        CommandLine|contains:
+            - 'downloaded_'
+            - 'FILE_CHUNK'
+            - 'FILE_COMPLETE'
+    condition: (selection_chunking and selection_encoding) or selection_files
+falsepositives:
+    - Legitimate file transfer utilities using similar chunking
+level: high
+tags:
+    - attack.exfiltration
+    - attack.t1041

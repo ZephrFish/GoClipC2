@@ -562,8 +562,7 @@ Screen capture details:
 - Bitmap Handle: %d
 - BitBlt Result: %d
 
-Environment: Windows clipboard covert channel
-Research Use: Authorized security testing only`,
+Environment: Windows clipboard covert channel`,
 		timestamp, width, height, hdcScreen, hdcMem, hBitmap, ret)
 
 	return []byte(screenshotInfo), nil
