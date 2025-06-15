@@ -25,7 +25,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: '1.21'
     
@@ -58,7 +58,7 @@ jobs:
         go build -ldflags="-s -w -H=windowsgui" -o builds/${{ matrix.goos }}-${{ matrix.goarch }}/client-stealth.exe client.go
     
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: goclipc2-${{ matrix.goos }}-${{ matrix.goarch }}
         path: builds/${{ matrix.goos }}-${{ matrix.goarch }}/
@@ -69,24 +69,27 @@ jobs:
     if: github.event_name == 'release'
     steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
     
     - name: Create release archives
       run: |
+        cd artifacts
         for dir in goclipc2-*; do
           platform=$(echo $dir | sed 's/goclipc2-//')
           if [[ $platform == windows* ]]; then
-            zip -r ${platform}.zip $dir/
+            cd $dir && zip -r ../${platform}.zip . && cd ..
           else
-            tar -czf ${platform}.tar.gz $dir/
+            tar -czf ${platform}.tar.gz -C $dir .
           fi
         done
     
     - name: Upload release assets
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: |
-          *.zip
-          *.tar.gz
+          artifacts/*.zip
+          artifacts/*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
