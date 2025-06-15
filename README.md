@@ -3,6 +3,9 @@ GoClipC2 is a PoC command and control framework that uses the Windows clipboard 
 
 The tool is specifically designed to operate effectively in virtualized desktop infrastructure (VDI), Remote Desktop Protocol (RDP) sessions, and standard Windows environments.
 
+![image](https://github.com/user-attachments/assets/e7ff0988-c969-4c7c-9345-3deff7964b31)
+
+
 _It's very much hacked together so stuff may just not work, it comes with absolutely zero warranty_
 
 ## Quick Start
