@@ -1,0 +1,33 @@
+title: GoClipC2 Clipboard Polling Pattern
+status: experimental
+description: Detects GoClipC2 characteristic 500ms clipboard polling pattern
+author: Andy Gill / ZephrFish
+date: 2025/06/15
+references:
+    - https://blog.zsec.uk/clippy-goes-rogue
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_clipboard:
+        ParentImage|endswith: '.exe'
+        Image|contains:
+            - 'clipboard'
+            - 'clip'
+    selection_timing:
+        CommandLine|contains:
+            - '500'
+            - '0.5'
+            - 'ticker'
+    selection_hidden:
+        CommandLine|contains: 'HideWindow'
+    condition: selection_clipboard and (selection_timing or selection_hidden)
+    timeframe: 1m
+    count: > 20
+falsepositives:
+    - Legitimate clipboard monitoring utilities
+    - System backup software
+level: medium
+tags:
+    - attack.command_and_control
+    - attack.t1102
