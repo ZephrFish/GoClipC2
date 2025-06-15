@@ -1,0 +1,25 @@
+title: GoClipC2 Protocol Prefix Detection
+status: experimental
+description: Detects GoClipC2 specific protocol prefix "SYSUPD:" in process command lines or memory
+author: Andy Gill / ZephrFish
+date: 2025/06/15
+references:
+    - https://blog.zsec.uk/clippy-goes-rogue
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_protocol:
+        CommandLine|contains: 'SYSUPD:'
+    selection_context:
+        - Image|endswith: '.exe'
+        - ParentCommandLine|contains:
+            - 'clipboard'
+            - 'base64'
+    condition: selection_protocol and selection_context
+falsepositives:
+    - Unknown legitimate software using SYSUPD prefix
+level: high
+tags:
+    - attack.command_and_control
+    - attack.t1102

@@ -1,0 +1,39 @@
+
+title: GoClipC2 Command Queue Processing
+status: experimental
+description: Detects GoClipC2 specific command queuing with JSON parsing and sequential execution
+author: Andy Gill / ZephrFish
+date: 2025/06/15
+references:
+    - https://blog.zsec.uk/clippy-goes-rogue
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_queue:
+        CommandLine|contains:
+            - 'MSG_QUEUE'
+            - 'processQueue'
+            - 'commandQueue'
+    selection_json:
+        CommandLine|contains:
+            - 'json.Unmarshal'
+            - 'Commands'
+            - 'Pending'
+            - 'Completed'
+    selection_execution:
+        Image|endswith:
+            - '\cmd.exe'
+            - '\powershell.exe'
+        CommandLine|contains:
+            - 'Queue['
+            - 'executeCommand'
+    condition: (selection_queue and selection_json) or selection_execution
+    timeframe: 30s
+    count: > 3
+falsepositives:
+    - Task automation software with JSON configuration
+level: high
+tags:
+    - attack.execution
+    - attack.t1059

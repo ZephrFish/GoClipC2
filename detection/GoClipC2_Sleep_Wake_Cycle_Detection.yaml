@@ -1,0 +1,33 @@
+title: GoClipC2 Sleep Wake Cycle Detection
+status: experimental
+description: Detects GoClipC2 specific sleep/wake cycle commands for evasion
+author: Andy Gill / ZephrFish
+date: 2025/06/15
+references:
+    - https://blog.zsec.uk/clippy-goes-rogue
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_sleep:
+        CommandLine|contains:
+            - 'MSG_SLEEP'
+            - 'MSG_WAKE'
+            - 'sleepUntil'
+            - 'time.ParseDuration'
+    selection_messages:
+        CommandLine|contains:
+            - 'Going to sleep for'
+            - 'Waking up from sleep'
+            - 'Sleeping for'
+            - 'Already awake'
+    selection_timing:
+        CommandLine|regex: '.*(30s|5m|1h|2h).*'
+    condition: selection_sleep and (selection_messages or selection_timing)
+falsepositives:
+    - Power management utilities
+    - Scheduled task management tools
+level: medium
+tags:
+    - attack.defense_evasion
+    - attack.t1497
