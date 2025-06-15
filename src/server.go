@@ -1256,7 +1256,7 @@ func main() {
 	}
 
 	if !*quiet {
-		fmt.Println("=== COMPLETE ENHANCED CLIPBOARD C2 SERVER ===")
+		fmt.Println("=== GoClipC2 ===")
 		fmt.Println("")
 		fmt.Println("===============================================")
 		fmt.Println("")
@@ -1269,16 +1269,6 @@ func main() {
 		fmt.Printf("Quiet Mode: %v\n", *quiet)
 		fmt.Printf("Interactive Mode: %v\n", *interactive)
 		fmt.Println("")
-		fmt.Println("Features:")
-		fmt.Println("✓ VDI/RDP Environment Detection")
-		fmt.Println("✓ File Upload/Download with Progress")
-		fmt.Println("✓ Command Queuing System")
-		fmt.Println("✓ Background Persistence Control")
-		fmt.Println("✓ Sleep/Wake Management")
-		fmt.Println("✓ Screenshot Capture")
-		fmt.Println("✓ Keylogger Control")
-		fmt.Println("✓ Process List Enumeration")
-		fmt.Println("✓ Heartbeat Customization")
 		fmt.Println("")
 	}
 
