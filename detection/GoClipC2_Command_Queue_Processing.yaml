@@ -30,7 +30,7 @@ detection:
             - 'executeCommand'
     condition: (selection_queue and selection_json) or selection_execution
     timeframe: 30s
-    count: > 3
+    count: '>3'
 falsepositives:
     - Task automation software with JSON configuration
 level: high

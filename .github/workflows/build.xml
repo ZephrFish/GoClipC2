@@ -1,0 +1,92 @@
+name: Build GoClipC2
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [windows, linux, darwin]
+        goarch: [amd64, 386]
+        exclude:
+          - goos: darwin
+            goarch: 386
+          - goos: linux
+            goarch: 386
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+    
+    - name: Initialize Go module
+      run: |
+        go mod init clipboard-c2
+        go mod tidy
+    
+    - name: Build Server
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: |
+        mkdir -p builds/${{ matrix.goos }}-${{ matrix.goarch }}
+        go build -ldflags="-s -w" -o builds/${{ matrix.goos }}-${{ matrix.goarch }}/server${{ matrix.goos == 'windows' && '.exe' || '' }} server.go
+    
+    - name: Build Client
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: |
+        go build -ldflags="-s -w" -o builds/${{ matrix.goos }}-${{ matrix.goarch }}/client${{ matrix.goos == 'windows' && '.exe' || '' }} client.go
+    
+    - name: Build GUI-less Client (Windows only)
+      if: matrix.goos == 'windows'
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      run: |
+        go build -ldflags="-s -w -H=windowsgui" -o builds/${{ matrix.goos }}-${{ matrix.goarch }}/client-stealth.exe client.go
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: goclipc2-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: builds/${{ matrix.goos }}-${{ matrix.goarch }}/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+    
+    - name: Create release archives
+      run: |
+        for dir in goclipc2-*; do
+          platform=$(echo $dir | sed 's/goclipc2-//')
+          if [[ $platform == windows* ]]; then
+            zip -r ${platform}.zip $dir/
+          else
+            tar -czf ${platform}.tar.gz $dir/
+          fi
+        done
+    
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          *.zip
+          *.tar.gz
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
